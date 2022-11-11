@@ -25,47 +25,50 @@ function criaPlaneta(raio, textura, orbita){
 	return planet;
 }
 
-function addEmOrbita(objetoFilho, distancia, objetoPai){
-	objeto.translateX(distancia);
-	objetoPai.add(objetoFilho);
-}
+const sol = new Planet(20,0,"textures/sun.jpeg");
+const solMesh = sol.getMesh();
+const sistemaSolar = new THREE.Group();
+sistemaSolar.add(solMesh);
 
-function criarLuz(){
-	var pointLight = new THREE.PointLight(0xFFFFFF);
-	pointLight.position.set(10, 50, 30);
-	scene.add(pointLight);
-}
+scene.add(sistemaSolar);
 
-const texturaLua = new THREE.TextureLoader().load('textures/lua.jpg');
-const lua = criaPlaneta(2,texturaLua,20);
+const mercurio = new Planet(2, 30, "/textures/mercury.png");
+const mercurioMesh = mercurio.getMesh();
+const mercurioSistema = new THREE.Group();
+mercurioSistema.add(mercurioMesh);
 
-const texturaTerra = new THREE.TextureLoader().load('textures/earth.jpeg');
-const terra = criaPlaneta(10,texturaTerra,70);
-terra.add(lua);
+const venus = new Planet(3, 40, "/textures/venus.jpeg");
+const venusMesh = venus.getMesh();
+const venusSistema = new THREE.Group();
+venusSistema.add(venusMesh);
 
-const texturaSol = new THREE.TextureLoader().load('textures/sun.jpeg');
-const sol = criaPlaneta(20,texturaSol,0);
-sol.add(terra);
+const terra = new Planet(4, 50, "/textures/earth.jpeg");
+const terraMesh = terra.getMesh();
+const terraSistema = new THREE.Group();
+terraSistema.add(terraMesh);
 
-criarLuz();
+const marte = new Planet(5, 60, "/textures/mars.jpeg");
+const marteMesh = marte.getMesh();
+const marteSistema = new THREE.Group();
+marteSistema.add(marteMesh);
 
-function rotacionarSol(){
-	var matrizRotacao = new THREE.Matrix4();
-	matrizRotacao.makeRotationY(calcularRadianos(1));
-	sol.applyMatrix(matrizRotacao);
-}
+const luaTerra = new Planet(0.5, 5, "/textures/lua.jpg");
+const luaTerraMesh = luaTerra.getMesh();
+const luaTerraSistema = new THREE.Group();
+luaTerraSistema.add(luaTerraMesh);
 
-function rotacionarObjeto(objeto, tranlacao, rotacao){
-	var matrizRotacaoY = new THREE.Matrix4();
-	matrizRotacaoY.makeRotationY(calcularRadianos(tranlacao));
-	terra.applyMatrix(matrizRotacaoY);
+/* Adiciona lua a órbita do planeta Terra*/
+terraMesh.add(luaTerraSistema);
 
+sistemaSolar.add(terraSistema,mercurioSistema,venusSistema,marteSistema);
+
+function rotacionarObjeto(objeto, rotacao){
 	var matrizRotacaoEixo = new THREE.Matrix4();
 	var	matrizTranslacaoPosicao = new THREE.Matrix4();
 	var	matrizTranslacaoOrigem = new THREE.Matrix4();
 	var	posicao = objeto.position;
 
-	matrizRotacaoEixo.makeRotationY(calcularRadianos(rotacao));
+	matrizRotacaoEixo.makeRotationY(rotacao);
 	matrizTranslacaoPosicao.makeTranslation(posicao.x, posicao.y, posicao.z);
 	matrizTranslacaoOrigem.makeTranslation(-posicao.x, -posicao.y, -posicao.z);
 
@@ -74,67 +77,50 @@ function rotacionarObjeto(objeto, tranlacao, rotacao){
 	objeto.applyMatrix(matrizTranslacaoPosicao);
 }
 
-function rotacionarTerra(){
-	var matrizRotacaoY = new THREE.Matrix4();
-	matrizRotacaoY.makeRotationY(calcularRadianos(1));
-	terra.applyMatrix(matrizRotacaoY);
-
-	var matrizRotacaoEixo = new THREE.Matrix4();
-	var	matrizTranslacaoPosicao = new THREE.Matrix4();
-	var	matrizTranslacaoOrigem = new THREE.Matrix4();
-	var	posicao = terra.position;
-
-	matrizRotacaoEixo.makeRotationY(calcularRadianos(1.5));
-	matrizTranslacaoPosicao.makeTranslation(posicao.x, posicao.y, posicao.z);
-	matrizTranslacaoOrigem.makeTranslation(-posicao.x, -posicao.y, -posicao.z);
-
-	terra.applyMatrix(matrizTranslacaoOrigem);
-	terra.applyMatrix(matrizRotacaoEixo);
-	terra.applyMatrix(matrizTranslacaoPosicao);
-}
-
-function rotacionarLua(){
-	var matrizRotacaoY = new THREE.Matrix4();
-	matrizRotacaoY.makeRotationY(calcularRadianos(6));
-	lua.applyMatrix(matrizRotacaoY);
-
-	var matrizRotacaoEixo = new THREE.Matrix4();
-	var	matrizTranslacaoPosicao = new THREE.Matrix4();
-	var	matrizTranslacaoOrigem = new THREE.Matrix4();
-	var	posicao = lua.position;
-
-	matrizRotacaoEixo.makeRotationY(calcularRadianos(0.6));
-	matrizTranslacaoPosicao.makeTranslation(posicao.x, posicao.y, posicao.z);
-	matrizTranslacaoOrigem.makeTranslation(-posicao.x, -posicao.y, -posicao.z);
-
-	lua.applyMatrix(matrizTranslacaoOrigem);
-	lua.applyMatrix(matrizRotacaoEixo);
-	lua.applyMatrix(matrizTranslacaoPosicao);
-}
-
-function calcularRadianos(grau){
-	return grau * Math.PI / 180;
-}
 
 const controls = new THREE.OrbitControls( camera, renderer.domElement );
+controls.update();
 
-//controls.update();
+const EARTH_YEAR = 2 * Math.PI * (1 / 60) * (1 / 60);
+const EARTH_DAY = 2 * Math.PI * (1 / 10) * (1 / 10);
+
+function addLinhaRotacao(planetaMesh, planetaSitema, mostrarLinha = true){
+	const linhaRotacao = new Rotation(planetaMesh,mostrarLinha);
+	const linhaRotacaoMesh = linhaRotacao.getMesh();
+	planetaSitema.add(linhaRotacaoMesh);
+}
+
+
+addLinhaRotacao(marteMesh,marteSistema);
+/*addLinhaRotacao(terraMesh,terraSistema);
+addLinhaRotacao(venusMesh,venusSistema);
+addLinhaRotacao(mercurioMesh,mercurioSistema);*/
+
 
 function animate(){
 	renderer.render(scene, camera);
 
-	rotacionarObjeto(sol,0,1);
-	//rotacionarObjeto(terra,0.1,2);
-	//rotacionarObjeto(lua,5,3);
+	rotacionarObjeto(solMesh,0.001);
+	
+	rotacionarObjeto(mercurioSistema,EARTH_YEAR*4);
 
-	rotacionarLua();
-	rotacionarTerra();
-	//rotacionarObjeto(terra,0.1,1.5);
-	//rotacionarObjeto(lua,0.1,1);
-	//rotacionarSol();
+	rotacionarObjeto(venusSistema,EARTH_YEAR*2);
 
-	//controls.update();
+	rotacionarObjeto(terraSistema,EARTH_YEAR);
+	rotacionarObjeto(terraMesh,EARTH_DAY);
 
+	//rotacionarObjeto(marteSistema,EARTH_YEAR/2);
+	rotacionarObjeto(marteMesh,EARTH_DAY*2);
+
+	
+
+	
+
+	
+
+	rotacionarObjeto(luaTerraSistema,EARTH_DAY);
+
+	controls.update();
 	requestAnimationFrame(animate);
 }
 
