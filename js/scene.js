@@ -36,21 +36,30 @@ const mercurio = new Planet(2, 30, "/textures/mercury.png");
 const mercurioMesh = mercurio.getMesh();
 const mercurioSistema = new THREE.Group();
 mercurioSistema.add(mercurioMesh);
+const orbitaMercurio = new Orbita(mercurioMesh);
+sistemaSolar.add(orbitaMercurio.getMesh());
+
 
 const venus = new Planet(3, 40, "/textures/venus.jpeg");
 const venusMesh = venus.getMesh();
 const venusSistema = new THREE.Group();
 venusSistema.add(venusMesh);
+const orbitaVenus = new Orbita(venusMesh);
+sistemaSolar.add(orbitaVenus.getMesh());
 
 const terra = new Planet(4, 50, "/textures/earth.jpeg");
 const terraMesh = terra.getMesh();
 const terraSistema = new THREE.Group();
 terraSistema.add(terraMesh);
+const orbitaTerra = new Orbita(terraMesh);
+sistemaSolar.add(orbitaTerra.getMesh());
 
 const marte = new Planet(5, 60, "/textures/mars.jpeg");
 const marteMesh = marte.getMesh();
 const marteSistema = new THREE.Group();
 marteSistema.add(marteMesh);
+const orbitaMarte = new Orbita(marteMesh);
+sistemaSolar.add(orbitaMarte.getMesh());
 
 const luaTerra = new Planet(0.5, 5, "/textures/lua.jpg");
 const luaTerraMesh = luaTerra.getMesh();
@@ -91,7 +100,7 @@ function addLinhaRotacao(planetaMesh, planetaSitema, mostrarLinha = true){
 }
 
 
-addLinhaRotacao(marteMesh,marteSistema);
+//addLinhaRotacao(marteMesh,marteSistema);
 /*addLinhaRotacao(terraMesh,terraSistema);
 addLinhaRotacao(venusMesh,venusSistema);
 addLinhaRotacao(mercurioMesh,mercurioSistema);*/
