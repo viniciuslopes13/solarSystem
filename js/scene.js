@@ -7,6 +7,8 @@ var fovy = 75,
     	far = 300;
 
 const scene = new THREE.Scene();
+scene.background = new THREE.TextureLoader().load("textures/galaxy.jpg");
+
 
 const camera = new THREE.PerspectiveCamera( fovy, aspectRatio, near, far );
 camera.position.set(75, 75, 75);
