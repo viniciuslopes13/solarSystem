@@ -85,7 +85,6 @@ meshs.forEach(element => {
 	addOrbita(element);
 });
 
-
 function addOrbita(planetMesh){
 	const orbita = new Orbita(planetMesh);
 	sistemaSolar.add(orbita.getMesh());
